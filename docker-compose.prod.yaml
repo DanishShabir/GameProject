@@ -1,0 +1,75 @@
+version: "3.7"
+services:
+
+  app:
+      build:
+        args:
+          user: sammy
+          uid: 1000
+        context: ./
+        dockerfile: dockerfiles/app.prod
+      image: lora-oil-app
+      container_name: lora-oil-app
+      restart: unless-stopped
+      working_dir: /var/www/
+#      volumes:
+#        - ./src:/var/www
+      networks:
+        - lora-oil
+
+  db:
+    image: mariadb
+    container_name: lora-oil-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: oil_dev_db
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - lora-oil
+
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - 8080:8080
+
+
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: lora-oil-nginx
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./src:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d
+    networks:
+      - lora-oil
+#    environment:
+# when traffic in the nginx-proxy for oil.doodlelabs.local is seen, send to this nginx container port 80
+#      VIRTUAL_HOST: oil.doodlelabs.local
+
+#  webserver:
+#      image: jwilder/whoami
+#      environment:
+#        VIRTUAL_HOST: my-cool-app.localhost
+
+#  nginx-proxy:
+#    image: jwilder/nginx-proxy
+#    container_name: nginx-proxy
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    volumes:
+#      - /var/run/docker.sock:/tmp/docker.sock:ro
+#      - ./docker-compose/certs:/etc/nginx/certs
+#    networks:
+#      - lora-oil
+#    depends_on:
+#      - nginx
+
+networks:
+  lora-oil:
+    driver: bridge

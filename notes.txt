@@ -1,0 +1,15 @@
+1) build for production with docker compose:
+# docker build -t lora-app:v1 -f dockerfiles/app.prod .
+
+  docker-compose -f docker-compose.prod.yaml up --build -d
+
+that will create an image with a tag:latest
+
+2) re-tag it as a release locally
+ docker tag lora-oil-app:latest lora-oil-app:v1
+
+ docker tag lora-oil-app:latest doodlelabsuk/lora-oil-app:v1
+
+3) push the new tagged container to dockerhub
+ docker push doodlelabsuk/lora-oil-app:v1
+

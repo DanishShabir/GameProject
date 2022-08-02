@@ -1,0 +1,9 @@
+- hosts: all
+  sudo: true
+  vars:
+    vhost: oil.doodlelabs.co.uk
+  vars_files:
+    - vars/db.yml
+  roles:
+    - oil-web
+    - jamie-mariadb
